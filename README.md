@@ -1,3 +1,81 @@
+# 10주차
+## 개요
+
+Next.js의 **Server Components / Client Components** 개념에서  
+`"use client"` 지시문은 **클라이언트 전용 컴포넌트임을 명시**하는 역할을 합니다.  
+
+이 문서는 `"use client"`의 사용 예시, 데이터 전달 방식, 성능 최적화 방법 등을 다룹니다.
+
+---
+
+## 🧩 Client Component 생성
+
+Client Component를 만들려면 파일 맨 위에 `"use client"`를 추가합니다.
+
+```tsx
+'use client'
+
+import { useState } from 'react'
+
+export default function Counter() {
+  const [count, setCount] = useState(0)
+
+  return (
+    <div>
+      <p>{count} likes</p>
+      <button onClick={() => setCount(count + 1)}>Click me</button>
+    </div>
+  )
+}
+```
+ JS 번들 크기 줄이기
+
+"use client"는 최소한의 영역에만 적용하는 것이 좋습니다.
+
+상위 레이아웃 등 큰 컴포넌트 전체에 "use client"를 붙이면 번들 크기가 커집니다.
+
+예시
+// app/layout.tsx
+```ts
+import Search from './search'
+import Logo from './logo'
+
+export default function Layout({ children }: { children: React.ReactNode }) {
+  return (
+    <>
+      <nav>
+        <Logo />     {/* 서버 렌더링 가능 */}
+        <Search />   {/* 클라이언트 전용 */}
+      </nav>
+      <main>{children}</main>
+    </>
+  )
+}
+```
+
+// app/ui/search.tsx
+```ts
+'use client'
+
+export default function Search() {
+  // ...
+}
+```
+
+ 이렇게 하면 정적인 부분은 서버에서 처리하고,
+상호작용이 필요한 Search만 클라이언트에서 동작합니다
+
+
+
+# 9주차
+
+
+# 8주차
+
+
+# 7주차
+-시험
+
 # 6주차
 
 # 5주차
