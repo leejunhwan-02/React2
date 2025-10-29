@@ -8,7 +8,7 @@ Next.js의 **Server Components / Client Components** 개념에서
 
 ---
 
-## 🧩 Client Component 생성
+##  Client Component 생성
 
 Client Component를 만들려면 파일 맨 위에 `"use client"`를 추가합니다.
 
@@ -65,6 +65,157 @@ export default function Search() {
  이렇게 하면 정적인 부분은 서버에서 처리하고,
 상호작용이 필요한 Search만 클라이언트에서 동작합니다
 
+ 서버 → 클라이언트 데이터 전달
+
+Server Component에서 데이터를 불러오고
+Client Component로 props를 통해 전달할 수 있습니다.
+
+// app/[id]/page.tsx
+```ts
+import LikeButton from '@/app/ui/like-button'
+import { getPost } from '@/lib/data'
+
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  const post = await getPost(id)
+
+  return <LikeButton likes={post.likes} />
+}
+```
+// app/ui/like-button.tsx
+```ts
+'use client'
+
+export default function LikeButton({ likes }: { likes: number }) {
+  // ...
+}
+```
+
+ 주의: Client Component로 전달되는 props는 반드시 직렬화 가능(Serializable) 해야 합니다.
+
+ Server ↔ Client 컴포넌트 섞기 (Interleaving)
+
+Server Component를 Client Component의 children으로 넘길 수 있습니다.
+
+예시
+// app/ui/modal.tsx
+```ts
+'use client'
+
+export default function Modal({ children }: { children: React.ReactNode }) {
+  return <div>{children}</div>
+}
+```
+// app/page.tsx
+```ts
+import Modal from './ui/modal'
+import Cart from './ui/cart'
+
+export default function Page() {
+  return (
+    <Modal>
+      <Cart /> {/* 서버 컴포넌트 */}
+    </Modal>
+  )
+}
+```
+
+ 서버 렌더링된 UI를 클라이언트 상태를 가진 컴포넌트 안에 자연스럽게 포함할 수 있습니다.
+
+ React Context 사용하기
+
+React의 Context API는 Server Component에서 직접 지원되지 않음
+→ 따라서 Client Component Provider를 만들어 사용합니다.
+
+// app/theme-provider.tsx
+```ts
+'use client'
+
+import { createContext } from 'react'
+
+export const ThemeContext = createContext({})
+
+export default function ThemeProvider({ children }: { children: React.ReactNode }) {
+  return <ThemeContext.Provider value="dark">{children}</ThemeContext.Provider>
+}
+```
+// app/layout.tsx
+```ts
+import ThemeProvider from './theme-provider'
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html>
+      <body>
+        <ThemeProvider>{children}</ThemeProvider>
+      </body>
+    </html>
+  )
+}
+```
+
+ 팁: Provider는 가능한 한 트리의 깊은 곳에 위치시켜야
+Next.js가 정적 부분을 최적화하기 쉽습니다.
+
+ 써드파티(Third-party) 컴포넌트 사용
+
+클라이언트 전용 기능(useState, useEffect)을 사용하는
+서드파티 컴포넌트는 반드시 Client Component에서만 사용해야 합니다.
+
+// app/gallery.tsx
+```ts
+'use client'
+
+import { useState } from 'react'
+import { Carousel } from 'acme-carousel'
+
+export default function Gallery() {
+  const [isOpen, setIsOpen] = useState(false)
+
+  return (
+    <div>
+      <button onClick={() => setIsOpen(true)}>View pictures</button>
+      {isOpen && <Carousel />}
+    </div>
+  )
+}
+```
+
+만약 Server Component에서 직접 사용하려 하면 오류가 발생합니다.
+이를 해결하려면 래퍼(Wrapper) 를 만들어 감싸줍니다.
+
+// app/carousel.tsx
+```ts
+'use client'
+
+import { Carousel } from 'acme-carousel'
+export default Carousel
+```
+
+이제 Server Component에서도 정상적으로 사용할 수 있습니다:
+
+// app/page.tsx
+```ts
+import Carousel from './carousel'
+
+export default function Page() {
+  return (
+    <div>
+      <p>View pictures</p>
+      <Carousel />
+    </div>
+  )
+}
+```
+📦 라이브러리 제작자를 위한 조언
+
+라이브러리에서 클라이언트 전용 기능(예: useState, useEffect)을 사용하는 엔트리 포인트에는
+"use client"를 반드시 추가하세요.
+
+그래야 사용자가 따로 래퍼를 만들 필요 없이 사용할 수 있습니다.
+
+일부 번들러(예: esbuild)는 "use client"를 제거할 수 있으므로,
+빌드 설정에서 보존하도록 명시해야 합니다.
 
 
 # 9주차
