@@ -1,7 +1,7 @@
 # 10주차
 ## 개요
 
-# 🧠 Next.js `"use client"` 완벽 정리
+#  Next.js `"use client"` 완벽 정리
 
 Next.js의 **Server Components / Client Components** 개념에서  
 `"use client"` 지시문은 **클라이언트 전용 컴포넌트임을 명시**하는 역할을 합니다.  
@@ -38,7 +38,7 @@ export default function Counter() {
 > `"use client"`는 **최소한의 영역에만 적용하는 것이 좋습니다.**  
 > 상위 레이아웃 전체에 적용하면 불필요하게 JS 번들이 커집니다.
 
-### ✅ 예시
+###  예시
 
 ```tsx
 // app/layout.tsx
