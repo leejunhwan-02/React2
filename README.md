@@ -1,3 +1,134 @@
+# 13주차
+
+# Next.js CSS 스타일링 가이드
+
+## Tailwind CSS
+
+### 설치
+```bash
+pnpm add -D tailwindcss @tailwindcss/postcss
+```
+
+### PostCSS 설정
+```js
+export default {
+  plugins: {
+    '@tailwindcss/postcss': {},
+  },
+}
+```
+
+### Global CSS에 Tailwind 불러오기
+```css
+@import 'tailwindcss';
+```
+
+### 레이아웃에서 사용
+```tsx
+import './globals.css'
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <body>{children}</body>
+    </html>
+  )
+}
+```
+
+### 사용 예시
+```tsx
+export default function Page() {
+  return (
+    <main className="flex min-h-screen flex-col items-center justify-between p-24">
+      <h1 className="text-4xl font-bold">Welcome to Next.js!</h1>
+    </main>
+  )
+}
+```
+
+---
+
+## CSS Modules
+
+### 예시
+**blog.module.css**
+```css
+.blog {
+  padding: 24px;
+}
+```
+
+**page.tsx**
+```tsx
+import styles from './blog.module.css'
+
+export default function Page() {
+  return <main className={styles.blog}></main>
+}
+```
+
+---
+
+## Global CSS
+
+### global.css 만들기
+```css
+body {
+  padding: 20px 20px 60px;
+  max-width: 680px;
+  margin: 0 auto;
+}
+```
+
+### Root Layout에서 불러오기
+```tsx
+import './global.css'
+```
+
+---
+
+## 외부 스타일시트 사용하기
+```tsx
+import 'bootstrap/dist/css/bootstrap.css'
+```
+
+---
+
+## CSS 순서 & 병합
+Next.js는 import 순서대로 CSS를 병합하고 로딩 순서를 결정함.
+
+### 예시
+```tsx
+import { BaseButton } from './base-button'
+import styles from './page.module.css'
+```
+
+---
+
+## 추천 가이드라인
+- CSS import 위치를 일정하게 유지하기
+- 글로벌 스타일과 Tailwind는 root layout에 넣기
+- 대부분의 스타일은 Tailwind 사용
+- Tailwind로 해결이 안 되는 부분은 CSS Modules 사용
+- import 자동 정렬 기능은 비활성화 추천
+- 공통 스타일은 컴포넌트로 추출
+- 필요하면 next.config.js의 cssChunking 옵션 사용
+
+---
+
+## 개발 환경 vs 배포 환경
+- **개발 모드:** Fast Refresh로 CSS 즉시 반영됨
+- **배포 모드:** CSS가 자동으로 압축 및 병합됨
+- JavaScript가 꺼져 있어도 배포 환경에서는 CSS가 정상적으로 로드됨
+
+
+# 12주차
+
+
+# 11주차
+
+
 # 10주차
 ## 개요
 
@@ -263,7 +394,6 @@ export default function Page() {
 > 정적인 부분은 **서버에서 처리**,  
 > 상호작용이 필요한 부분만 **클라이언트에서 실행**하면  
 > **성능과 유지보수성 모두 향상**됩니다.
-
 
 
 # 9주차

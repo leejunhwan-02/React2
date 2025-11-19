@@ -1,5 +1,5 @@
-import Image from 'next/image'
- 
-export default function Page() {
-  return <Image src="/profile.png" alt="Profile" width={100} height={100} />
+import styles from './blog.module.css'
+
+export default function BlogPage() {
+    return <main
 }
